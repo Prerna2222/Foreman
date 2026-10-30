@@ -1,0 +1,19 @@
+
+name: tinydb
+
+# Path relative to this config file
+repo_path: ./tinydb
+
+# Directories relative to repo_path
+source_dirs:
+  - tinydb
+
+test_dirs:
+  - tests
+
+test_command:
+  - "{python}"
+  - "-m"
+  - "pytest"
+
+timeout_seconds: 120

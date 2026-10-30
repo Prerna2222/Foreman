@@ -1,0 +1,17 @@
+
+name: sample_project
+
+repo_path: .
+
+source_dirs:
+  - miniapp
+
+test_dirs:
+  - tests
+
+test_command:
+  - "{python}"
+  - "-m"
+  - "pytest"
+
+timeout_seconds: 60

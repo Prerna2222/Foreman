@@ -223,7 +223,74 @@ QUICK=1 ./run_all.sh            # one worker, one ticket, about 3 minutes: check
 
 **The comparison**: see `foreman-code/EVAL.md`.
 
-## 9. Repository map
+### 9. Analyze another Python project (code graph)
+
+Foreman supports configurable Python source discovery and
+pytest tracing through a `foreman.yaml` file.
+
+Example configuration:
+
+```yaml
+name: sample_project
+repo_path: .
+source_dirs:
+  - miniapp
+test_dirs:
+  - tests
+test_command:
+  - "{python}"
+  - "-m"
+  - "pytest"
+timeout_seconds: 60
+```
+
+Paths are relative to the configuration file's directory
+(`repo_path`) or the target repository (`source_dirs`
+and `test_dirs`).
+
+From the Foreman repository root, start FalkorDB:
+
+```bash
+docker compose -f foreman-db-setup/docker-compose.yml up -d
+```
+
+Podman Compose can be used instead of Docker Compose.
+
+Generate the test trace:
+
+```bash
+uv run python foreman-code/trace_tests.py --config examples/sample_project/foreman.yaml --out results/sample-trace.json
+```
+
+Load the code graph:
+
+```bash
+uv run python foreman-schema/load_code.py --config examples/sample_project/foreman.yaml --trace results/sample-trace.json
+```
+
+The sample graph is named `foreman_sample_project`.
+
+Note: Loading a project deletes and rebuilds its named graph.
+Tracing runs the configured pytest tests, so only analyze
+trusted repositories.
+
+Run the offline regression tests:
+
+```bash
+uv run python -m pytest tests/test_configurable_project.py -v
+```
+
+The optional FalkorDB integration test requires a running
+database and the environment variable
+`FOREMAN_RUN_GRAPH_TESTS=1`.
+
+Current scope: configurable code indexing, test tracing,
+and graph generation. The AI-agent orchestration remains
+specific to the original TinyDB demonstration.
+
+
+
+## 10. Repository map
 
 | Folder | What is in it |
 |---|---|
@@ -232,7 +299,7 @@ QUICK=1 ./run_all.sh            # one worker, one ticket, about 3 minutes: check
 | `foreman-db-setup/` | Docker Compose for FalkorDB, setup check, persistence check |
 | `tinydb/` | The seeded copy of TinyDB with 10 planted bugs |
 
-## 10. Credits and licences
+## 11. Credits and licences
 
 - TinyDB (MIT) by Markus Siemens is the codebase the agents fix.
 - The six animated characters are rendered by the **bible-strong-avatar-lab** engine (AGPL-3.0, © Stéphane Montlouis-Calixte, https://github.com/smontlouis/bible-strong-avatar-lab). Because it is AGPL-3.0, this repository is public and the credit is shown on the page. The office scene is drawn for this page in SVG.

@@ -10,3 +10,4 @@ node_modules/
 foreman-schema-old/
 results/
 /graph-schema-v1.pdf
+.pytest_cache/
